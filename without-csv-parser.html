@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSV File Upload</title>
+</head>
+<body>
+    <h1>Upload CSV Files</h1>
+    <input type="file" id="fileInput" accept=".csv" multiple><br><br>
+    <button onclick="uploadFiles()">Upload</button>
+    
+    <script>
+        async function uploadFiles() {
+            const fileInput = document.getElementById('fileInput')
+            const files = fileInput.files
+
+            if (!files || files.length === 0) {
+                alert('Please select at least one file.')
+                return
+            }
+
+            const formData = new FormData()
+
+            // Append each file to FormData object
+            for (const file of files) {
+                formData.append('productData', file)
+            }
+
+            try {
+                const response = await fetch('http://localhost:3081/api/upload', {
+                    method: 'POST',
+                    body: formData
+                })
+
+                if (response.ok) {
+                    const responseData = await response.json()
+                    alert(responseData.message)
+                } else {
+                    throw new Error('Failed to upload CSV files.')
+                }
+            } catch (error) {
+                console.error('Error uploading CSV files:', error)
+                alert('Error uploading CSV files. Please try again.')
+            }
+        }
+    </script>
+</body>
+</html>
